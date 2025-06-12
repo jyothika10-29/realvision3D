@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR Property Viewer - Fallback</title>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .header {
+      background: #1e3a8a;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .model-container {
+      flex: 1;
+      background: #f0f9ff;
+      position: relative;
+    }
+    .controls {
+      background: #e0f2fe;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      border-radius: 5px;
+      border: none;
+      background: #3b82f6;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    .instructions {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>RealVisionAR - 3D Model Viewer</h2>
+      <p>Fallback version (no AR camera required)</p>
+    </div>
+    
+    <div class="model-container">
+      <!-- A-Frame scene for 3D model -->
+      <a-scene embedded>
+        <a-entity 
+          id="property-model" 
+          position="0 1.5 -3" 
+          rotation="0 0 0" 
+          scale="2 2 2"
+          gltf-model="/models/house1.glb">
+        </a-entity>
+        
+        <a-sky color="#f0f9ff"></a-sky>
+        <a-entity camera position="0 1.6 0" look-controls></a-entity>
+      </a-scene>
+      
+      <div class="instructions">
+        <h4>Instructions</h4>
+        <p>• Drag to rotate the view</p>
+        <p>• Pinch/scroll to zoom</p>
+        <p>• Use controls below to manipulate the model</p>
+      </div>
+    </div>
+    
+    <div class="controls">
+      <button onclick="rotateLeft()">Rotate Left</button>
+      <button onclick="rotateRight()">Rotate Right</button>
+      <button onclick="resetView()">Reset View</button>
+      <button onclick="window.close()">Exit</button>
+    </div>
+  </div>
+  
+  <script>
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const propertyId = urlParams.get('propertyId') || '1';
+    const modelType = urlParams.get('modelType') || 'exterior';
+    
+    // Model controls
+    function rotateLeft() {
+      const model = document.getElementById('property-model');
+      const currentRotation = model.getAttribute('rotation');
+      model.setAttribute('rotation', {
+        x: currentRotation.x,
+        y: currentRotation.y - 30,
+        z: currentRotation.z
+      });
+    }
+    
+    function rotateRight() {
+      const model = document.getElementById('property-model');
+      const currentRotation = model.getAttribute('rotation');
+      model.setAttribute('rotation', {
+        x: currentRotation.x,
+        y: currentRotation.y + 30,
+        z: currentRotation.z
+      });
+    }
+    
+    function resetView() {
+      const model = document.getElementById('property-model');
+      model.setAttribute('rotation', { x: 0, y: 0, z: 0 });
+      model.setAttribute('position', { x: 0, y: 1.5, z: -3 });
+      model.setAttribute('scale', { x: 2, y: 2, z: 2 });
+    }
+    
+    // Update the window title with property info
+    document.title = `Property #${propertyId} - ${modelType} - AR View`;
+  </script>
+</body>
+</html>
